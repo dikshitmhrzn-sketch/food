@@ -6,6 +6,8 @@ const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUs
   const [lastName, setLastName] = useState(currentUser ? currentUser.split(' ')[1] || 'S' : 'S');
   const [email, setEmail] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [readyOrders, setReadyOrders] = useState({});
+  const [orderStatus, setOrderStatus] = useState('preparing');
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -139,15 +141,83 @@ const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUs
           {/* ORDER SECTION */}
           <div style={{ position: 'absolute', right: '100px', bottom: '80px', display: 'flex', gap: '30px' }}>
 
-            <div style={{ width: '260px', background: '#fff', borderRadius: '25px', padding: '25px', textAlign: 'center' }}>
-              <h3 style={{ marginBottom: '40px', fontWeight: 500 }}>Your Current Order</h3>
-              {orderItems && orderItems.length > 0 ? (
+            <div style={{ width: '280px', background: '#fff', borderRadius: '20px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+              <h3 style={{ marginBottom: '15px', fontWeight: 600, fontSize: '15px' }}>📦 Current Order</h3>
+              {orderItems && orderItems.length > 0 && Object.keys(readyOrders).length < orderItems.length ? (
                 <div>
-                  <h4>{orderItems[0].name}</h4>
-                  <p style={{ marginTop: '40px', fontSize: '15px' }}>Status : Preparing</p>
+                  {Object.keys(readyOrders).map(id => readyOrders[id]).filter(Boolean).length < orderItems.length && (
+                    <>
+                      <img 
+                        src={orderItems[Object.keys(readyOrders).length]?.img} 
+                        alt={orderItems[Object.keys(readyOrders).length]?.name}
+                        style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '12px', marginBottom: '12px' }}
+                      />
+                      <h4 style={{ margin: '10px 0', fontSize: '14px', fontWeight: 'bold' }}>{orderItems[Object.keys(readyOrders).length]?.name}</h4>
+                      <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>Qty: {orderItems[Object.keys(readyOrders).length]?.quantity}</p>
+                      
+                      <div style={{ marginTop: '15px', marginBottom: '12px' }}>
+                        <p style={{ margin: '0 0 10px 0', fontSize: '11px', fontWeight: 'bold', textAlign: 'center' }}>Order Status</p>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button 
+                            onClick={() => setOrderStatus('preparing')}
+                            style={{
+                              flex: 1,
+                              padding: '8px 10px',
+                              background: orderStatus === 'preparing' ? '#ff9800' : '#e0e0e0',
+                              color: orderStatus === 'preparing' ? '#fff' : '#666',
+                              border: 'none',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontSize: '11px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            🍳 Preparing
+                          </button>
+                          <button
+                            onClick={() => {
+                              setOrderStatus('ready');
+                              setTimeout(() => {
+                                const currentItem = orderItems[Object.keys(readyOrders).length];
+                                setReadyOrders(prev => ({
+                                  ...prev,
+                                  [currentItem.id]: true
+                                }));
+                                setOrderStatus('preparing');
+                              }, 1000);
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: '8px 10px',
+                              background: orderStatus === 'ready' ? '#4CAF50' : '#e0e0e0',
+                              color: orderStatus === 'ready' ? '#fff' : '#666',
+                              border: 'none',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontSize: '11px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            ✓ Ready
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div style={{
+                        background: orderStatus === 'preparing' ? '#fff3e0' : '#e8f5e9',
+                        padding: '10px',
+                        borderRadius: '10px',
+                        fontSize: '11px',
+                        color: orderStatus === 'preparing' ? '#f57c00' : '#2e7d32',
+                        fontWeight: 'bold'
+                      }}>
+                        {orderStatus === 'preparing' ? '⏱️ Preparing...' : '✅ Ready for pickup!'}
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
-                <p>No current orders</p>
+                <p style={{ fontSize: '12px', color: '#999', marginTop: '20px' }}>No current orders</p>
               )}
             </div>
 
