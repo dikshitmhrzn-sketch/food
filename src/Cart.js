@@ -24,14 +24,15 @@ const Cart = ({ cartItems, onNavigate, increaseQuantity, decreaseQuantity, remov
       overflow: 'hidden'
     },
     sidebar: {
-      width: '220px',
+      width: '140px',
       padding: '30px 10px',
       background: '#fff'
     },
     logo: {
       fontSize: '22px',
       fontWeight: 700,
-      color: 'orange'
+      color: 'orange',
+      textAlign: 'center'
     },
     sidebarUl: {
       listStyle: 'none',

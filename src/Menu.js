@@ -7,6 +7,7 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportMessage, setReportMessage] = useState('');
   const [showOrderedPopup, setShowOrderedPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
 
   const handleReport = () => {
     setShowDropdown(false);
@@ -98,7 +99,7 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
         <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: '#fff', textAlign: 'center' }} onClick={() => onNavigate('dashboard')}>Dashboard</div>
         <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: 'orange', color: '#fff', textAlign: 'center' }}>Menu</div>
         <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: '#fff', textAlign: 'center' }} onClick={() => onNavigate('orders')}>Orders</div>
-        <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: '#4CAF50', color: '#fff', textAlign: 'center', fontWeight: 'bold' }} onClick={() => onNavigate('cart')}>🛒 Cart</div>
+        <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: '#fff', textAlign: 'center' }} onClick={() => onNavigate('cart')}>🛒 Cart</div>
         <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: '#fff', textAlign: 'center' }} onClick={() => onNavigate('user')}>User</div>
         <div style={{ padding: '12px 15px', borderRadius: '30px', marginBottom: '12px', cursor: 'pointer', background: '#fff', textAlign: 'center' }} onClick={() => onNavigate('home')}>Logout</div>
       </div>
@@ -193,9 +194,9 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
                 >
                   Order
                 </button>
-                <button 
-                  style={{ border: '2px solid #4CAF50', padding: '8px 20px', borderRadius: '25px', background: '#4CAF50', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }} 
-                  onClick={() => { addToCart(item); setShowOrderedPopup(true); setTimeout(() => setShowOrderedPopup(false), 2000); }}
+                <button
+                  style={{ border: '2px solid #4CAF50', padding: '8px 20px', borderRadius: '25px', background: '#4CAF50', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                  onClick={() => addToCart(item)}
                 >
                   🛒 Add
                 </button>
@@ -266,7 +267,7 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
             </div>
           </div>
 
-          <button style={{ background: 'orange', color: 'white', textAlign: 'center', padding: '14px', borderRadius: '30px', cursor: 'pointer', border: 'none', width: '100%', fontSize: '15px', fontWeight: 'bold' }}>Checkout</button>
+          <button style={{ background: 'orange', color: 'white', textAlign: 'center', padding: '10px', borderRadius: '30px', cursor: 'pointer', border: 'none', width: '100%', fontSize: '15px', fontWeight: 'bold' }}>Checkout <span style={{ fontSize: '18px' }}>🛒</span></button>
         </div>
       </div>
 
@@ -303,7 +304,7 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
       {showOrderedPopup && (
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#4CAF50', color: 'white', padding: '20px 30px', borderRadius: '15px', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
           <span style={{ fontSize: '24px' }}>✓</span>
-          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Added to Cart!</span>
+          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Ordered!</span>
         </div>
       )}
     </div>

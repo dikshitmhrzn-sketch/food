@@ -59,6 +59,7 @@ const Dashboard = ({ onNavigate, orderItems, addToOrder, removeFromOrder, curren
             <li className="dashboard-sidebar-li-active">Dashboard</li>
             <li className="dashboard-sidebar-li" onClick={() => onNavigate('menu')}>Menu</li>
             <li className="dashboard-sidebar-li" onClick={() => onNavigate('orders')}>Orders</li>
+            <li className="dashboard-sidebar-li" onClick={() => onNavigate('cart')}>🛒 Cart</li>
             <li className="dashboard-sidebar-li" onClick={() => onNavigate('user')}>User</li>
             <li className="dashboard-sidebar-li" onClick={() => onNavigate('home')}>Logout</li>
           </ul>
@@ -107,40 +108,72 @@ const Dashboard = ({ onNavigate, orderItems, addToOrder, removeFromOrder, curren
           </div>
         </div>
 
-        {/* ORDER */}
-        <div className="dashboard-order">
-          <h3>Current Order</h3>
+        {/* CURRENT ORDER */}
+        <div style={{ width: '300px', background: '#fff', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <h3 style={{ marginBottom: '20px' }}>Current Order</h3>
 
-          <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+          {/* FIRST ORDER ITEM BOX WITH IMAGE */}
+          {orderItems.length > 0 && (
+            <div style={{ background: '#f9f9f9', borderRadius: '15px', padding: '12px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '15px' }}>
+              <img src={orderItems[0]?.img} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '10px', marginBottom: '8px' }} alt="current-order" />
+              <h4 style={{ margin: '6px 0', fontSize: '13px' }}>{orderItems[0]?.name}</h4>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 'bold', fontSize: '12px' }}>Rs.{orderItems[0]?.price * orderItems[0]?.quantity}</span>
+                {orderItems[0]?.quantity > 1 && (
+                  <span style={{ background: '#ff9800', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>+{orderItems[0]?.quantity - 1}</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div style={{ maxHeight: '250px', overflowY: 'auto', flex: 1 }}>
             {orderItems.length === 0 ? (
-              <p>No items in order</p>
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                  <div style={{ width: '50px', height: '50px', backgroundColor: '#ddd', borderRadius: '10px', marginRight: '10px' }}></div>
+                  <div>No items<br /><span style={{ color: 'orange', fontSize: '14px' }}>Rs.0</span></div>
+                </div>
+              </>
             ) : (
-              orderItems.map((item) => (
-                <div key={item.id} className="dashboard-order-item">
-                  <img className="dashboard-order-item-img" src={item.img} />
-                  <div>
-                    {item.name} {item.quantity > 1 && <span style={{ color: 'orange', fontWeight: 'bold' }}>x{item.quantity}</span>}<br /><span className="dashboard-price">Rs.{item.price * item.quantity}</span>
+              orderItems.map((item, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                  <img src={item.img} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '10px', marginRight: '10px' }} alt={item.name} />
+                  <div style={{ flex: 1 }}>
+                    {item.quantity > 1 ? `${item.quantity} ${item.name}` : item.name}<br /><span style={{ color: 'orange', fontSize: '14px' }}>Rs.{item.price * item.quantity}</span>
                   </div>
-                  <button className="dashboard-remove-btn" onClick={() => removeFromOrder(item.id)}>×</button>
+                  <button onClick={() => removeFromOrder(item.name)} style={{ background: '#ff4444', color: 'white', border: 'none', borderRadius: '5px', padding: '2px 6px', cursor: 'pointer', fontSize: '12px', marginLeft: '10px' }}>×</button>
                 </div>
               ))
             )}
           </div>
 
-          {orderItems.length > 0 && (
-            <>
-              <div className="dashboard-subtotal-box">
-                <div className="dashboard-summary-div"><span>Sub Total</span><span>Rs.{orderItems.reduce((sum, item) => sum + item.price, 0)}</span></div>
-                <div className="dashboard-summary-div"><span>Discount</span><span>Rs.0</span></div>
+          {/* SUMMARY BOXES - MOVED DOWN */}
+          <div style={{ marginTop: 'auto', paddingTop: '5px' }}>
+            {/* SUBTOTAL AND DISCOUNT IN ONE BOX */}
+            <div style={{ background: '#f3f3f3', borderRadius: '15px', padding: '20px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span style={{ fontSize: '15px' }}>Sub Total</span>
+                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>Rs.{orderItems.reduce((total, item) => total + (item.price * item.quantity), 0)}</span>
               </div>
-              
-              <div className="dashboard-total-box">
-                <div className="dashboard-summary-div"><b>Total</b><b>Rs.{orderItems.reduce((sum, item) => sum + item.price, 0)}</b></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '15px' }}>Discount</span>
+                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>Rs.0</span>
               </div>
+            </div>
 
-              <button className="dashboard-pay">Continue to Payment</button>
-            </>
-          )}
+            {/* TOTAL IN SEPARATE BOX */}
+            <div style={{ background: '#f3f3f3', borderRadius: '15px', padding: '18px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <b style={{ fontSize: '16px' }}>Total</b>
+                <b style={{ fontSize: '16px', color: '#ff9800' }}>Rs.{orderItems.reduce((total, item) => total + (item.price * item.quantity), 0)}</b>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <button style={{ background: 'orange', color: 'white', textAlign: 'center', padding: '10px', borderRadius: '30px', cursor: 'pointer', border: 'none', flex: 1, fontSize: '15px', fontWeight: 'bold' }}>Checkout</button>
+              <span style={{ fontSize: '20px', marginLeft: '10px' }}>🛒</span>
+            </div>
+          </div>
         </div>
 
         {/* Ordered Popup */}
