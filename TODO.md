@@ -3,4 +3,4 @@
 - [ ] Separate the cart icon from the Checkout button in src/Dashboard.js
 - [ ] Separate the cart icon from the Checkout button in src/Menu.js
 - [ ] Confirm changes are applied correctly
-a=
+a==

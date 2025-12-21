@@ -75,6 +75,7 @@ const Dashboard = ({ onNavigate, orderItems, addToOrder, removeFromOrder, curren
             <div className="dashboard-search-container">
               <span className="dashboard-search-icon">🔍</span>
               <input className="dashboard-search" placeholder="Search products" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <button style={{ marginLeft: '10px', padding: '10px 20px', background: 'orange', color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer' }}>Search</button>
             </div>
           </div>
 

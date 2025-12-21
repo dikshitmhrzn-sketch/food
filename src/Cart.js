@@ -44,7 +44,8 @@ const Cart = ({ cartItems, onNavigate, increaseQuantity, decreaseQuantity, remov
       marginBottom: '12px',
       borderRadius: '30px',
       cursor: 'pointer',
-      background: '#fff'
+      background: '#fff',
+      textAlign: 'center'
     },
     sidebarLiActive: {
       background: 'orange',
@@ -52,7 +53,8 @@ const Cart = ({ cartItems, onNavigate, increaseQuantity, decreaseQuantity, remov
       padding: '12px 15px',
       marginBottom: '12px',
       borderRadius: '30px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      textAlign: 'center'
     },
     main: {
       flex: 1,

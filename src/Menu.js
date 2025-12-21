@@ -109,9 +109,10 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
         
         {/* TOP BAR */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-          <div style={{ position: 'relative', marginLeft: '80px' }}>
+          <div style={{ position: 'relative', marginLeft: '80px', display: 'flex', alignItems: 'center' }}>
             <input style={{ width: '650px', padding: '12px 18px 12px 45px', borderRadius: '30px', border: 'none', outline: 'none', background: '#fff' }} type="text" placeholder="Search products" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             <div style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', color: '#666' }}>🔍</div>
+            <button style={{ marginLeft: '10px', padding: '12px 20px', background: 'orange', color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer' }}>Search</button>
           </div>
           <div style={{ marginRight: '50px', position: 'relative' }}>
             <button 
@@ -267,7 +268,10 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
             </div>
           </div>
 
-          <button style={{ background: 'orange', color: 'white', textAlign: 'center', padding: '10px', borderRadius: '30px', cursor: 'pointer', border: 'none', width: '100%', fontSize: '15px', fontWeight: 'bold' }}>Checkout <span style={{ fontSize: '18px' }}>🛒</span></button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button style={{ background: 'orange', color: 'white', textAlign: 'center', padding: '10px', borderRadius: '30px', cursor: 'pointer', border: 'none', flex: 1, fontSize: '15px', fontWeight: 'bold' }}>Checkout</button>
+            <span className="cart-icon-run" style={{ fontSize: '20px', marginLeft: '10px' }}>🛒</span>
+          </div>
         </div>
       </div>
 
