@@ -120,20 +120,38 @@ const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUs
 
             <div style={{ marginBottom: '25px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '15px' }}>Email</label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={!isEditing}
-                style={{ 
-                  width: '100%', 
-                  padding: '12px 18px', 
-                  borderRadius: '30px', 
-                  border: 'none', 
-                  background: isEditing ? '#fff' : '#e1e1e1', 
+                style={{
+                  width: '100%',
+                  padding: '12px 18px',
+                  borderRadius: '30px',
+                  border: 'none',
+                  background: isEditing ? '#fff' : '#e1e1e1',
                   outline: 'none',
                   cursor: isEditing ? 'text' : 'not-allowed'
-                }} 
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '25px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '15px' }}>Change Password</label>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                disabled={!isEditing}
+                style={{
+                  width: '100%',
+                  padding: '12px 18px',
+                  borderRadius: '30px',
+                  border: 'none',
+                  background: isEditing ? '#fff' : '#e1e1e1',
+                  outline: 'none',
+                  cursor: isEditing ? 'text' : 'not-allowed'
+                }}
               />
             </div>
           </div>

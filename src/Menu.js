@@ -7,7 +7,7 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportMessage, setReportMessage] = useState('');
   const [showOrderedPopup, setShowOrderedPopup] = useState(false);
-  const [popupMessage, setPopupMessage] = useState('');
+  const [showAddedToCartPopup, setShowAddedToCartPopup] = useState(false);
 
   const handleReport = () => {
     setShowDropdown(false);
@@ -115,25 +115,7 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
             <button style={{ marginLeft: '10px', padding: '12px 20px', background: 'orange', color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer' }}>Search</button>
           </div>
           <div style={{ marginRight: '50px', position: 'relative' }}>
-            <button 
-              style={{ border: 'none', padding: '10px 18px', borderRadius: '25px', cursor: 'pointer', background: '#fff', marginRight: '10px', fontSize: '18px', color: '#000' }}
-              onClick={() => setShowDropdown(!showDropdown)}
-            >
-              ⚙️
-            </button>
-            {showDropdown && (
-              <div style={{ position: 'absolute', top: '45px', left: '0', background: '#fff', border: '1px solid #ddd', borderRadius: '10px', padding: '10px', zIndex: 1000, minWidth: '120px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                <button 
-                  style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: '8px 12px', width: '100%', textAlign: 'left', borderRadius: '5px' }}
-                  onClick={handleReport}
-                  onMouseEnter={(e) => e.target.style.background = '#f5f5f5'}
-                  onMouseLeave={(e) => e.target.style.background = 'transparent'}
-                >
-                  Report
-                </button>
-              </div>
-            )}
-            <button style={{ border: 'none', padding: '10px 18px', borderRadius: '25px', cursor: 'pointer', background: '#ff7a00', color: '#fff' }}>Add Items</button>
+            <button style={{ border: 'none', padding: '10px 18px', borderRadius: '25px', cursor: 'pointer', background: '#ff7a00', color: '#fff' }} onClick={() => setShowReportModal(true)}>Report</button>
           </div>
         </div>
 
@@ -189,15 +171,19 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
               <h4 style={{ fontSize: '14px', marginBottom: '4px', textAlign: 'center', width: '100%' }}>{item.name}</h4>
               <p style={{ fontSize: '13px', color: '#666', marginBottom: '10px' }}>Rs:{item.price}</p>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                <button 
-                  style={{ border: 'none', padding: '8px 20px', borderRadius: '25px', background: 'orange', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }} 
+                <button
+                  style={{ border: 'none', padding: '8px 20px', borderRadius: '25px', background: 'orange', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
                   onClick={() => { addToOrder(item); setShowOrderedPopup(true); setTimeout(() => setShowOrderedPopup(false), 2000); }}
+                  onMouseEnter={(e) => e.target.style.background = '#e56c00'}
+                  onMouseLeave={(e) => e.target.style.background = 'orange'}
                 >
                   Order
                 </button>
                 <button
                   style={{ border: '2px solid #4CAF50', padding: '8px 20px', borderRadius: '25px', background: '#4CAF50', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
-                  onClick={() => addToCart(item)}
+                  onClick={() => { addToCart(item); setShowAddedToCartPopup(true); setTimeout(() => setShowAddedToCartPopup(false), 2000); }}
+                  onMouseEnter={(e) => e.target.style.background = '#3e8e41'}
+                  onMouseLeave={(e) => e.target.style.background = '#4CAF50'}
                 >
                   🛒 Add
                 </button>
@@ -309,6 +295,14 @@ const Menu = ({ onNavigate, orderItems, addToOrder, removeFromOrder, addToCart }
         <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#4CAF50', color: 'white', padding: '20px 30px', borderRadius: '15px', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
           <span style={{ fontSize: '24px' }}>✓</span>
           <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Ordered!</span>
+        </div>
+      )}
+
+      {/* Added to Cart Popup */}
+      {showAddedToCartPopup && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#4CAF50', color: 'white', padding: '20px 30px', borderRadius: '15px', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+          <span style={{ fontSize: '24px' }}>🛒</span>
+          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Added to Cart!</span>
         </div>
       )}
     </div>
