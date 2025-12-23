@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUser }) => {
+const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUser, readyOrders, setReadyOrders, orderStatus, setOrderStatus }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [firstName, setFirstName] = useState(currentUser ? currentUser.split(' ')[0] : 'John');
   const [lastName, setLastName] = useState(currentUser ? currentUser.split(' ')[1] || 'S' : 'S');
   const [email, setEmail] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);
-  const [readyOrders, setReadyOrders] = useState({});
-  const [orderStatus, setOrderStatus] = useState('preparing');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -139,8 +139,27 @@ const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUs
 
             <div style={{ marginBottom: '25px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '15px' }}>Change Password</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>Current Password</label>
               <input
                 type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                disabled={!isEditing}
+                style={{
+                  width: '100%',
+                  padding: '12px 18px',
+                  borderRadius: '30px',
+                  border: 'none',
+                  background: isEditing ? '#fff' : '#e1e1e1',
+                  outline: 'none',
+                  cursor: isEditing ? 'text' : 'not-allowed'
+                }}
+              />
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>New Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password"
                 disabled={!isEditing}
                 style={{
@@ -159,80 +178,24 @@ const UserProfile = ({ onNavigate, orderItems, currentUser, addToOrder, updateUs
           {/* ORDER SECTION */}
           <div style={{ position: 'absolute', right: '100px', bottom: '80px', display: 'flex', gap: '30px' }}>
 
-            <div style={{ width: '280px', background: '#fff', borderRadius: '20px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+            <div style={{ width: '280px', background: '#fff', borderRadius: '20px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer' }} onClick={() => onNavigate('orders')}>
               <h3 style={{ marginBottom: '15px', fontWeight: 600, fontSize: '15px' }}>📦 Current Order</h3>
-              {orderItems && orderItems.length > 0 && Object.keys(readyOrders).length < orderItems.length ? (
-                <div>
-                  {Object.keys(readyOrders).map(id => readyOrders[id]).filter(Boolean).length < orderItems.length && (
-                    <>
-                      <img 
-                        src={orderItems[Object.keys(readyOrders).length]?.img} 
-                        alt={orderItems[Object.keys(readyOrders).length]?.name}
-                        style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '12px', marginBottom: '12px' }}
+              {orderItems && orderItems.length > 0 ? (
+                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                  {orderItems.map((item, index) => (
+                    <div key={item.id} style={{ marginBottom: '15px', padding: '10px', border: '1px solid #eee', borderRadius: '10px' }}>
+                      <img
+                        src={item.img}
+                        alt={item.name}
+                        style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }}
                       />
-                      <h4 style={{ margin: '10px 0', fontSize: '14px', fontWeight: 'bold' }}>{orderItems[Object.keys(readyOrders).length]?.name}</h4>
-                      <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>Qty: {orderItems[Object.keys(readyOrders).length]?.quantity}</p>
-                      
-                      <div style={{ marginTop: '15px', marginBottom: '12px' }}>
-                        <p style={{ margin: '0 0 10px 0', fontSize: '11px', fontWeight: 'bold', textAlign: 'center' }}>Order Status</p>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button 
-                            onClick={() => setOrderStatus('preparing')}
-                            style={{
-                              flex: 1,
-                              padding: '8px 10px',
-                              background: orderStatus === 'preparing' ? '#ff9800' : '#e0e0e0',
-                              color: orderStatus === 'preparing' ? '#fff' : '#666',
-                              border: 'none',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              fontSize: '11px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            🍳 Preparing
-                          </button>
-                          <button
-                            onClick={() => {
-                              setOrderStatus('ready');
-                              setTimeout(() => {
-                                const currentItem = orderItems[Object.keys(readyOrders).length];
-                                setReadyOrders(prev => ({
-                                  ...prev,
-                                  [currentItem.id]: true
-                                }));
-                                setOrderStatus('preparing');
-                              }, 1000);
-                            }}
-                            style={{
-                              flex: 1,
-                              padding: '8px 10px',
-                              background: orderStatus === 'ready' ? '#4CAF50' : '#e0e0e0',
-                              color: orderStatus === 'ready' ? '#fff' : '#666',
-                              border: 'none',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              fontSize: '11px',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            ✓ Ready
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <div style={{
-                        background: orderStatus === 'preparing' ? '#fff3e0' : '#e8f5e9',
-                        padding: '10px',
-                        borderRadius: '10px',
-                        fontSize: '11px',
-                        color: orderStatus === 'preparing' ? '#f57c00' : '#2e7d32',
-                        fontWeight: 'bold'
-                      }}>
-                        {orderStatus === 'preparing' ? '⏱️ Preparing...' : '✅ Ready for pickup!'}
-                      </div>
-                    </>
-                  )}
+                      <h4 style={{ margin: '5px 0', fontSize: '12px', fontWeight: 'bold' }}>{item.name}</h4>
+                      <p style={{ margin: '2px 0', fontSize: '10px', color: '#666' }}>Qty: {item.quantity}</p>
+                      <p style={{ margin: '2px 0', fontSize: '10px', color: readyOrders[item.id] ? '#4CAF50' : '#ff9800' }}>
+                        {readyOrders[item.id] ? '✅ Ready' : '⏱️ Preparing'}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <p style={{ fontSize: '12px', color: '#999', marginTop: '20px' }}>No current orders</p>
