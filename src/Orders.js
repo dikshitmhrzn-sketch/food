@@ -1,135 +1,137 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const Orders = ({ onNavigate, orderItems, currentUser }) => {
-  const [visibleActiveOrders, setVisibleActiveOrders] = useState([]);
-  const [readyOrders, setReadyOrders] = useState({});
-  const [orderStatus, setOrderStatus] = useState('preparing');
+  const totalAmount = orderItems.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+  const groupedOrders = orderItems.reduce((acc, item) => {
+    const dateKey = item.date || 'Today';
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(item);
+    return acc;
+  }, {});
 
-  useEffect(() => {
-    if (orderItems && orderItems.length > 0 && visibleActiveOrders.length === 0) {
-      setVisibleActiveOrders([orderItems[0]]);
-    }
-  }, [orderItems, visibleActiveOrders.length]);
-
-  const handleRefresh = () => {
-    if (orderItems) {
-      setVisibleActiveOrders([...orderItems]);
-    }
+  const orderStatus = (item) => {
+    if (item.status === 'delivered') return '✅ Delivered';
+    if (item.status === 'preparing') return '🔥 Preparing';
+    if (item.status === 'out-for-delivery') return '🚚 Out for Delivery';
+    return '⏳ Processing';
   };
-
-  const markAsReady = () => {
-    if (orderItems && orderItems.length > 0) {
-      const readyIndex = Object.keys(readyOrders).length;
-      if (readyIndex < orderItems.length) {
-        setReadyOrders({ ...readyOrders, [orderItems[readyIndex].id]: true });
-      }
-    }
-  };
-
-  // Filter out ready orders for display
-  const pendingOrders = orderItems ? orderItems.filter(item => !readyOrders[item.id]) : [];
 
   return (
-    <div style={{ background: '#f4f3f1', display: 'flex', height: '100vh', margin: 0, padding: 0, boxSizing: 'border-box', fontFamily: 'Segoe UI, sans-serif' }}>
-      
-      {/* SIDEBAR */}
-      <div style={{ width: '140px', background: '#ffffff', padding: '20px 10px', marginLeft: '10px' }}>
-        <div style={{ fontSize: '22px', fontWeight: 700, color: 'orange', textAlign: 'center', marginBottom: '30px' }}>▲▲▲</div>
-
-        <div>
-          <div style={{ padding: '12px 18px', borderRadius: '25px', marginBottom: '12px', cursor: 'pointer', textAlign: 'center' }} onClick={() => onNavigate('dashboard')}>Dashboard</div>
-          <div style={{ padding: '12px 18px', borderRadius: '25px', marginBottom: '12px', cursor: 'pointer', textAlign: 'center' }} onClick={() => onNavigate('menu')}>Menu</div>
-          <div style={{ padding: '12px 18px', borderRadius: '25px', marginBottom: '12px', cursor: 'pointer', background: '#ff7a00', color: '#fff', textAlign: 'center' }}>Orders</div>
-          <div style={{ padding: '12px 18px', borderRadius: '25px', marginBottom: '12px', cursor: 'pointer', textAlign: 'center' }} onClick={() => onNavigate('user')}>User</div>
-          <div style={{ padding: '12px 18px', borderRadius: '25px', marginBottom: '12px', cursor: 'pointer', textAlign: 'center' }} onClick={() => onNavigate('home')}>Logout</div>
-        </div>
-      </div>
-
-      {/* MAIN */}
-      <div style={{ flex: 1, padding: '35px 45px', display: 'flex', flexDirection: 'column' }}>
-        
-        {/* HEADER */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-12">
+          <button 
+            className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-full hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+            onClick={() => onNavigate('dashboard')}
+          >
+            <span>←</span>
+            <span>Back to Dashboard</span>
+          </button>
           <div>
-            <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>Order Name</h2>
-            <p style={{ fontSize: '16px', color: '#666', margin: '5px 0 0 0' }}>{currentUser || 'Guest'}</p>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent mb-2">
+              My Orders
+            </h1>
+            <p className="text-xl text-gray-600 text-center">{currentUser || 'User'}</p>
           </div>
-          <button style={{ background: '#ff7a00', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '25px', cursor: 'pointer' }} onClick={handleRefresh}>Refresh List</button>
         </div>
 
-        {/* CONTENT WRAPPER */}
-        <div style={{ display: 'flex', gap: '30px', flex: 1 }}>
-          {/* LEFT SECTION - ORDERS TABLE */}
-          <div style={{ flex: 1, overflowY: 'auto' }}>
-            {/* TABLE HEADER */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', fontWeight: '500', marginBottom: '12px', marginLeft: '50px' }}>
-              <div>Order Name</div>
-              <div style={{ textAlign: 'center' }}>Customer Name</div>
-              <div style={{ textAlign: 'center' }}>Time Status</div>
+        {/* Order Summary */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-4xl shadow-2xl p-8 mb-12 border border-white/50">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div>
+              <p className="text-3xl font-bold text-emerald-600">{orderItems.length}</p>
+              <p className="text-lg text-gray-600 mt-1">Total Orders</p>
             </div>
+            <div>
+              <p className="text-3xl font-bold text-blue-600">${totalAmount.toFixed(2)}</p>
+              <p className="text-lg text-gray-600 mt-1">Total Amount</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-purple-600">⭐ {Math.floor(totalAmount / 5)}</p>
+              <p className="text-lg text-gray-600 mt-1">Loyalty Points</p>
+            </div>
+          </div>
+        </div>
 
-            {/* ORDER ROWS */}
-            {/* Show all pending orders */}
-            {pendingOrders && pendingOrders.length > 0 ? (
-              pendingOrders.map((item, index) => (
-                <div key={item.id} style={{ background: '#fff', borderRadius: '30px', padding: '18px 25px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', alignItems: 'center', marginBottom: '15px', marginLeft: '20px' }}>
-                  <div style={{ textAlign: 'left' }}>{item.name}</div>
-                  <div style={{ textAlign: 'center' }}>{currentUser || 'Guest'}</div>
-                  <div style={{ textAlign: 'center' }}>{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+        {/* Orders List */}
+        {Object.entries(groupedOrders).length > 0 ? (
+          <div className="space-y-6">
+            {Object.entries(groupedOrders).map(([date, orders]) => (
+              <div key={date} className="bg-white/80 backdrop-blur-xl rounded-4xl shadow-2xl border border-white/50 overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-500 to-green-500 px-8 py-6 text-white">
+                  <h2 className="text-2xl font-bold">{date}</h2>
+                  <p className="opacity-90">{orders.length} items • Total: ${orders.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0).toFixed(2)}</p>
                 </div>
-              ))
-            ) : null}
-            
-            {/* Message when no pending orders */}
-            {(!pendingOrders || pendingOrders.length === 0) && (
-              <div style={{ background: '#fff', borderRadius: '30px', padding: '18px 25px', textAlign: 'center', marginBottom: '40px', marginLeft: '20px' }}>
-                No orders pending
+                
+                <div className="p-8">
+                  <div className="space-y-4">
+                    {orders.map((item, index) => (
+                      <div key={item.id || index} className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-3xl hover:shadow-lg transition-all border border-gray-200">
+                        <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-400 rounded-2xl flex items-center justify-center text-2xl font-bold mr-6 flex-shrink-0">
+                          {item.emoji || '🍕'}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-xl text-gray-800 truncate">{item.name}</h3>
+                          <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                            <span>Qty: {item.quantity || 1}</span>
+                            <span>${item.price ? (item.price * (item.quantity || 1)).toFixed(2) : '0.00'}</span>
+                            <span className="ml-auto">{orderStatus(item)}</span>
+                          </div>
+                          {item.note && (
+                            <p className="text-sm text-orange-600 mt-1 bg-orange-50 px-3 py-1 rounded-full inline-block">
+                              {item.note}
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="text-right ml-6">
+                          <p className="text-2xl font-bold text-emerald-600">
+                            ${(item.price * (item.quantity || 1)).toFixed(2)}
+                          </p>
+                          <p className="text-sm text-gray-500">{item.time || 'Just now'}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-            )}
-
-            {/* ACTIVE ORDERS */}
-            <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Order Name</h3>
-            </div>
-
-            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-              {/* Show all pending orders as thumbnails */}
-              {pendingOrders && pendingOrders.length > 0 ? (
-                pendingOrders.map((item, index) => (
-                  <div key={item.id} style={{ textAlign: 'center' }}>
-                    <img src={item.img} style={{ width: '110px', height: '110px', objectFit: 'cover', borderRadius: '20px' }} alt={item.name} />
-                    <p style={{ fontSize: '14px', fontWeight: 'bold', marginTop: '5px' }}>{item.name}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No pending orders</p>
-              )}
-            </div>
+            ))}
           </div>
-
-          {/* RIGHT SECTION - YOUR CURRENT ORDER BOX */}
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', marginBottom: '20px' }}>
-            <div style={{ width: '280px', background: '#fff', borderRadius: '20px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-              <h3>📦 Current Order</h3>
-              {pendingOrders && pendingOrders.length > 0 ? (
-                <div>
-                  <img src={pendingOrders[0]?.img} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '12px', marginBottom: '12px' }} alt="order-item" />
-                  <h4>{pendingOrders[0]?.name}</h4>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOrderStatus('preparing')} style={{ background: orderStatus === 'preparing' ? '#ff9800' : '#e0e0e0', border: 'none', padding: '10px 15px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>🍳 Preparing</button>
-                    <button onClick={() => { setOrderStatus('ready'); setTimeout(() => { markAsReady(); setOrderStatus('preparing'); }, 1000); }} style={{ background: orderStatus === 'ready' ? '#4CAF50' : '#e0e0e0', border: 'none', padding: '10px 15px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>✓ Ready</button>
-                  </div>
-                </div>
-              ) : (
-                <p>No current orders</p>
-              )}
-            </div>
+        ) : (
+          <div className="text-center py-24">
+            <div className="text-8xl mb-8">📦</div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">No Orders Yet</h2>
+            <p className="text-xl text-gray-600 mb-12">Your delicious orders will appear here once you start ordering!</p>
+            <button 
+              className="px-12 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xl rounded-full hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shadow-xl"
+              onClick={() => onNavigate('menu')}
+            >
+              🍕 Browse Menu
+            </button>
           </div>
+        )}
+
+        {/* Quick Actions */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-12">
+          <button 
+            className="flex-1 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-lg rounded-3xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+            onClick={() => onNavigate('menu')}
+          >
+            🍕 Continue Shopping
+          </button>
+          <button 
+            className="flex-1 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-lg rounded-3xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+            onClick={() => onNavigate('user')}
+          >
+            👤 Profile
+          </button>
         </div>
-
       </div>
     </div>
   );
 };
 
 export default Orders;
+

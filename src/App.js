@@ -14,26 +14,26 @@ link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;9
 link.rel = 'stylesheet';
 document.head.appendChild(link);
 
-export default function NepaleseFoodUI() {
+export default function MedicalReportApp() {
   // Initialize state from localStorage
   const [currentPage, setCurrentPage] = useState(() => {
     const savedPage = localStorage.getItem('currentPage');
     return savedPage || 'home';
   });
   
-  const [orderItems, setOrderItems] = useState(() => {
-    const savedItems = localStorage.getItem('orderItems');
+  const [reportsList, setReportsList] = useState(() => {
+    const savedItems = localStorage.getItem('reportsList');
     return savedItems ? JSON.parse(savedItems) : [];
   });
   
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    return savedUser || '';
+  const [currentPatient, setCurrentPatient] = useState(() => {
+    const savedPatient = localStorage.getItem('currentPatient');
+    return savedPatient || '';
   });
   
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem('cartItems');
-    return savedCart ? JSON.parse(savedCart) : [];
+  const [testResults, setTestResults] = useState(() => {
+    const savedTests = localStorage.getItem('testResults');
+    return savedTests ? JSON.parse(savedTests) : [];
   });
 
   // Save to localStorage whenever state changes
@@ -42,71 +42,71 @@ export default function NepaleseFoodUI() {
   }, [currentPage]);
 
   React.useEffect(() => {
-    localStorage.setItem('orderItems', JSON.stringify(orderItems));
-  }, [orderItems]);
+    localStorage.setItem('reportsList', JSON.stringify(reportsList));
+  }, [reportsList]);
 
   React.useEffect(() => {
-    localStorage.setItem('currentUser', currentUser);
-  }, [currentUser]);
+    localStorage.setItem('currentPatient', currentPatient);
+  }, [currentPatient]);
 
   React.useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]);
+    localStorage.setItem('testResults', JSON.stringify(testResults));
+  }, [testResults]);
 
-  const addToOrder = (item) => {
-    setOrderItems(prev => {
-      const existingItem = prev.find(orderItem => orderItem.name === item.name);
+  const addReport = (item) => {
+    setReportsList(prev => {
+      const existingItem = prev.find(report => report.name === item.name);
       if (existingItem) {
-        return prev.map(orderItem => 
-          orderItem.name === item.name 
-            ? { ...orderItem, quantity: (orderItem.quantity || 1) + 1 }
-            : orderItem
+        return prev.map(report => 
+          report.name === item.name 
+            ? { ...report, quantity: (report.quantity || 1) + 1 }
+            : report
         );
       }
       return [...prev, { ...item, quantity: 1, id: Date.now() }];
     });
   };
 
-  const removeFromOrder = (itemName) => {
-    setOrderItems(prev => prev.filter(item => item.name !== itemName));
+  const removeReport = (reportName) => {
+    setReportsList(prev => prev.filter(item => item.name !== reportName));
   };
 
-  const addToCart = (item) => {
-    setCartItems(prev => {
-      const existingItem = prev.find(cartItem => cartItem.name === item.name);
+  const addTestResult = (item) => {
+    setTestResults(prev => {
+      const existingItem = prev.find(test => test.name === item.name);
       if (existingItem) {
-        return prev.map(cartItem => 
-          cartItem.name === item.name 
-            ? { ...cartItem, quantity: (cartItem.quantity || 1) + 1 }
-            : cartItem
+        return prev.map(test => 
+          test.name === item.name 
+            ? { ...test, quantity: (test.quantity || 1) + 1 }
+            : test
         );
       }
       return [...prev, { ...item, quantity: 1, id: Date.now() }];
     });
   };
 
-  const increaseQuantity = (itemName) => {
-    setOrderItems(prev =>
+  const increaseQuantity = (reportName) => {
+    setReportsList(prev =>
       prev.map(item =>
-        item.name === itemName
+        item.name === reportName
           ? { ...item, quantity: item.quantity + 1 }
           : item
       )
     );
   };
 
-  const decreaseQuantity = (itemName) => {
-    setOrderItems(prev =>
+  const decreaseQuantity = (reportName) => {
+    setReportsList(prev =>
       prev.map(item =>
-        item.name === itemName && item.quantity > 1
+        item.name === reportName && item.quantity > 1
           ? { ...item, quantity: item.quantity - 1 }
           : item
       )
     );
   };
 
-  const updateUser = (newUserName) => {
-    setCurrentUser(newUserName);
+  const updatePatient = (newPatientName) => {
+    setCurrentPatient(newPatientName);
   };
 
   if (currentPage === 'register') {
@@ -114,49 +114,50 @@ export default function NepaleseFoodUI() {
   }
 
   if (currentPage === 'login') {
-    return <Login onBackToHome={() => setCurrentPage('home')} onGoToRegister={() => setCurrentPage('register')} onLoginSuccess={(userName) => { setCurrentUser(userName); setCurrentPage('dashboard'); }} />;
+    return <Login onBackToHome={() => setCurrentPage('home')} onGoToRegister={() => setCurrentPage('register')} onLoginSuccess={(patientName) => { setCurrentPatient(patientName); setCurrentPage('dashboard'); }} />;
   }
 
   if (currentPage === 'dashboard') {
-    return <Dashboard onNavigate={setCurrentPage} orderItems={orderItems} addToOrder={addToOrder} removeFromOrder={removeFromOrder} addToCart={addToCart} currentUser={currentUser} />;
+    return <Dashboard onNavigate={setCurrentPage} reportsList={reportsList} addReport={addReport} removeReport={removeReport} addTestResult={addTestResult} currentPatient={currentPatient} />;
   }
 
   if (currentPage === 'user') {
-    return <UserProfile onNavigate={setCurrentPage} orderItems={orderItems} currentUser={currentUser} addToOrder={addToOrder} updateUser={updateUser} />;
+    return <UserProfile onNavigate={setCurrentPage} reportsList={reportsList} currentPatient={currentPatient} addReport={addReport} updatePatient={updatePatient} />;
   }
 
   if (currentPage === 'menu') {
-    return <Menu onNavigate={setCurrentPage} orderItems={orderItems} addToOrder={addToOrder} removeFromOrder={removeFromOrder} addToCart={addToCart} />;
+    return <Menu onNavigate={setCurrentPage} reportsList={reportsList} addReport={addReport} removeReport={removeReport} addTestResult={addTestResult} />;
   }
 
   if (currentPage === 'orders') {
-    return <Orders onNavigate={setCurrentPage} orderItems={orderItems} currentUser={currentUser} />;
+    return <Orders onNavigate={setCurrentPage} reportsList={reportsList} currentPatient={currentPatient} />;
   }
 
   if (currentPage === 'cart') {
-    const removeFromCart = (itemName) => {
-      setCartItems(prev => prev.filter(item => item.name !== itemName));
+    const removeFromTests = (testName) => {
+      setTestResults(prev => prev.filter(item => item.name !== testName));
     };
-    const increaseCartQuantity = (itemName) => {
-      setCartItems(prev =>
+    const increaseTestQuantity = (testName) => {
+      setTestResults(prev =>
         prev.map(item =>
-          item.name === itemName
+          item.name === testName
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
       );
     };
-    const decreaseCartQuantity = (itemName) => {
-      setCartItems(prev =>
+    const decreaseTestQuantity = (testName) => {
+      setTestResults(prev =>
         prev.map(item =>
-          item.name === itemName && item.quantity > 1
+          item.name === testName && item.quantity > 1
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
       );
     };
-    return <Cart onNavigate={setCurrentPage} cartItems={cartItems} increaseQuantity={increaseCartQuantity} decreaseQuantity={decreaseCartQuantity} removeFromOrder={removeFromCart} />;
+    return <Cart onNavigate={setCurrentPage} testResults={testResults} increaseQuantity={increaseTestQuantity} decreaseQuantity={decreaseTestQuantity} removeFromOrder={removeFromTests} />;
   }
 
   return <Home onNavigate={setCurrentPage} />;
 }
+

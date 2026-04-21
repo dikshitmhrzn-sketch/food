@@ -1,158 +1,101 @@
-import React, { useState } from 'react';
-import './Dashboard.css';
+import React from 'react';
 
-const Dashboard = ({ onNavigate, orderItems, addToOrder, removeFromOrder, currentUser }) => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showOrderButton, setShowOrderButton] = useState(null);
-  const [showOrderedPopup, setShowOrderedPopup] = useState(false);
-
-  const foodItems = {
-    All: [
-      { name: 'Chicken Burger', price: 50, img: 'chicken burger.webp' },
-      { name: 'Mixed Pizza', price: 80, img: 'mixed pizza.webp' },
-      { name: 'Veg Rice', price: 110, img: 'mixed rice.webp' },
-      { name: 'Onion Rings', price: 30, img: 'onion.webp' },
-      { name: 'Sandwich', price: 120, img: 'sand wich.webp' },
-      { name: 'Fried Rice', price: 90, img: 'fried rice.webp' },
-      { name: 'Pasta', price: 110, img: 'pasta.webp' },
-      { name: 'Noodles', price: 85, img: 'Noodles.webp' }
-    ],
-    Burger: [
-      { name: 'Chicken Burger', price: 50, img: 'chicken burger.webp' },
-      { name: 'Cheese Burger', price: 60, img: 'cheese burger.webp' },
-      { name: 'Fish Burger', price: 65, img: 'fish burger.webp' },
-      { name: 'Veg Burger', price: 55, img: 'veg burger.webp' },
-      { name: 'Hamburger', price: 75, img: 'hamburger.webp' }
-    ],
-    Pizza: [
-      { name: 'Mixed Pizza', price: 80, img: 'mixed pizza.webp' },
-      { name: 'Veg Pizza', price: 60, img: 'veg pizza.webp' },
-      { name: 'Margherita Pizza', price: 75, img: 'veg pizza.webp' },
-      { name: 'Chicken Pizza', price: 95, img: 'chicken pizza.webp' },
-      { name: 'Cheese Pizza', price: 105, img: 'cheese pizza.webp' }
-    ],
-    Rice: [
-      { name: 'Fried Rice', price: 90, img: 'fried rice.webp' },
-      { name: 'Vegetable Rice', price: 65, img: 'vegetable rice.webp' },
-      { name: 'Steaming Biryani', price: 75, img: 'steaming Biryani.webp' },
-      { name: 'Chicken Biryani', price: 120, img: 'chicken biryani.webp' },
-      { name: 'Veg Biryani', price: 85, img: 'veg biryani.webp' }
-    ],
-    Sandwich: [
-      { name: 'Sandwich', price: 120, img: 'sand wich.webp' },
-      { name: 'Club Sandwich', price: 140, img: 'sand wich.webp' },
-      { name: 'Grilled Sandwich', price: 100, img: 'sand wich.webp' },
-      { name: 'Chicken Sandwich', price: 110, img: 'sand wich.webp' },
-      { name: 'Tuna Sandwich', price: 130, img: 'sand wich.webp' }
-    ]
-  };
-
+const Dashboard = ({ onNavigate, reportsList, addReport, removeReport, addTestResult, currentPatient }) => {
+  const totalReports = reportsList.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
 
   return (
-    <div className="dashboard-body">
-      <div className="dashboard-app">
-        {/* SIDEBAR */}
-        <div className="dashboard-sidebar">
-          <div className="dashboard-logo">▲▲▲</div>
-          <ul className="dashboard-sidebar-ul">
-            <li className="dashboard-sidebar-li-active">Dashboard</li>
-            <li className="dashboard-sidebar-li" onClick={() => onNavigate('menu')}>Menu</li>
-            <li className="dashboard-sidebar-li" onClick={() => onNavigate('orders')}>Orders</li>
-            <li className="dashboard-sidebar-li" onClick={() => onNavigate('user')}>User</li>
-            <li className="dashboard-sidebar-li" onClick={() => onNavigate('home')}>Logout</li>
-          </ul>
-        </div>
-
-        {/* MAIN */}
-        <div className="dashboard-main">
-          <div className="dashboard-header">
-            <div className="dashboard-welcome">
-              <h1>Welcome, {currentUser || 'Guest'}</h1>
-              <p>Discover whatever you need easily.</p>
-            </div>
-            <div className="dashboard-search-container">
-              <span className="dashboard-search-icon">🔍</span>
-              <input className="dashboard-search" placeholder="Search products" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-12">
+          <div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2">
+              Welcome Back, {currentPatient || 'Patient'}!
+            </h1>
+            <p className="text-xl text-gray-600">Your health analysis dashboard</p>
           </div>
-
-          <div className="dashboard-category">
-            <h2>Category</h2>
-            <div className="dashboard-cat-list">
-              <div className={selectedCategory === 'All' ? 'dashboard-cat-active' : 'dashboard-cat'} onClick={() => setSelectedCategory('All')}>⭐ All</div>
-              <div className={selectedCategory === 'Burger' ? 'dashboard-cat-active' : 'dashboard-cat'} onClick={() => setSelectedCategory('Burger')}>🍔 Burger</div>
-              <div className={selectedCategory === 'Pizza' ? 'dashboard-cat-active' : 'dashboard-cat'} onClick={() => setSelectedCategory('Pizza')}>🍕 Pizza</div>
-              <div className={selectedCategory === 'Rice' ? 'dashboard-cat-active' : 'dashboard-cat'} onClick={() => setSelectedCategory('Rice')}>🍚 Rice</div>
-              <div className={selectedCategory === 'Sandwich' ? 'dashboard-cat-active' : 'dashboard-cat'} onClick={() => setSelectedCategory('Sandwich')}>🥪 Sandwich</div>
-            </div>
-          </div>
-
-          <div className="dashboard-foods">
-            <h2>Popular Dishes</h2>
-            <div className="dashboard-food-grid">
-              {(searchTerm ? 
-                Object.values(foodItems).flat().filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())) :
-                foodItems[selectedCategory]
-              ).map((item, index) => (
-                  <div key={index} className="dashboard-card">
-                    <img className="dashboard-card-img" src={item.img} alt={item.name} onClick={() => setShowOrderButton(showOrderButton === index ? null : index)} style={{ cursor: 'pointer' }} />
-                    <p className="dashboard-card-p">{item.name}<br />Rs.{item.price}</p>
-                    {showOrderButton === index && (
-                      <button style={{ border: 'none', padding: '8px 30px', borderRadius: '25px', background: '#fff', cursor: 'pointer', marginTop: '10px' }} onClick={() => { addToOrder(item); setShowOrderButton(null); setShowOrderedPopup(true); setTimeout(() => setShowOrderedPopup(false), 2000); }}>Order</button>
-                    )}
-                  </div>
-                ))}
-            </div>
+          <div className="text-right">
+            <p className="text-3xl font-bold text-emerald-600">${totalReports.toFixed(2)}</p>
+            <p className="text-lg text-gray-500">Total Analysis Value</p>
           </div>
         </div>
 
-        {/* ORDER */}
-        <div className="dashboard-order">
-          <h3>Current Order</h3>
-
-          <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-            {orderItems.length === 0 ? (
-              <p>No items in order</p>
-            ) : (
-              orderItems.map((item) => (
-                <div key={item.id} className="dashboard-order-item">
-                  <img className="dashboard-order-item-img" src={item.img} />
-                  <div>
-                    {item.name} {item.quantity > 1 && <span style={{ color: 'orange', fontWeight: 'bold' }}>x{item.quantity}</span>}<br /><span className="dashboard-price">Rs.{item.price * item.quantity}</span>
-                  </div>
-                  <button className="dashboard-remove-btn" onClick={() => removeFromOrder(item.id)}>×</button>
-                </div>
-              ))
-            )}
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/50 hover:scale-105 transition-all duration-300">
+            <div className="text-4xl mb-4">📊</div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Active Reports</h3>
+            <p className="text-3xl font-bold text-blue-600">{reportsList.length}</p>
+          </div>
+          
+          <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/50 hover:scale-105 transition-all duration-300">
+            <div className="text-4xl mb-4">🧬</div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">AI Analysis</h3>
+            <p className="text-xl text-gray-600">Run AI diagnostics</p>
           </div>
 
-          {orderItems.length > 0 && (
-            <>
-              <div className="dashboard-subtotal-box">
-                <div className="dashboard-summary-div"><span>Sub Total</span><span>Rs.{orderItems.reduce((sum, item) => sum + item.price, 0)}</span></div>
-                <div className="dashboard-summary-div"><span>Discount</span><span>Rs.0</span></div>
-              </div>
-              
-              <div className="dashboard-total-box">
-                <div className="dashboard-summary-div"><b>Total</b><b>Rs.{orderItems.reduce((sum, item) => sum + item.price, 0)}</b></div>
-              </div>
-
-              <button className="dashboard-pay">Continue to Payment</button>
-            </>
-          )}
+          <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/50 hover:scale-105 transition-all duration-300">
+            <div className="text-4xl mb-4">🩺</div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Patient Profile</h3>
+            <p className="text-xl text-gray-600">Manage health data</p>
+          </div>
         </div>
 
-        {/* Ordered Popup */}
-        {showOrderedPopup && (
-          <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#4CAF50', color: 'white', padding: '20px 30px', borderRadius: '15px', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
-            <span style={{ fontSize: '24px' }}>✓</span>
-            <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Ordered!</span>
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div 
+            className="group bg-gradient-to-br from-blue-500 to-emerald-500 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+            onClick={() => onNavigate('menu')}
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">📈</div>
+            <h3 className="text-2xl font-bold mb-2">AI Analysis</h3>
+            <p className="opacity-90">Analyze medical reports</p>
           </div>
-        )}
+
+          <div 
+            className="group bg-gradient-to-br from-emerald-500 to-teal-500 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+            onClick={() => onNavigate('orders')}
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">📋</div>
+            <h3 className="text-2xl font-bold mb-2">Reports History</h3>
+            <p className="opacity-90">View past analyses</p>
+          </div>
+
+          <div 
+            className="group bg-gradient-to-br from-indigo-500 to-purple-500 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+            onClick={() => onNavigate('user')}
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">🩺</div>
+            <h3 className="text-2xl font-bold mb-2">Patient Profile</h3>
+            <p className="opacity-90">Update medical info</p>
+          </div>
+
+          <div 
+            className="group bg-gradient-to-br from-purple-500 to-pink-500 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+            onClick={() => onNavigate('cart')}
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">🧪</div>
+            <h3 className="text-2xl font-bold mb-2">Lab Results</h3>
+            <p className="opacity-90">Review test results</p>
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="mt-12 text-center">
+          <button 
+            className="px-12 py-4 bg-gray-200 text-gray-800 font-bold rounded-full text-xl hover:bg-gray-300 transition-all duration-300 shadow-xl hover:shadow-2xl"
+            onClick={() => {
+              localStorage.clear();
+              onNavigate('home');
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+

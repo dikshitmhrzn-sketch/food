@@ -1,15 +1,12 @@
-# TODO: Add Add to Cart Functionality
+na# TODO: Make React Food App Run
 
 ## Approved Plan Steps
-1. Add "Add to Cart" buttons to food cards in Dashboard.js
-2. Add a "View Cart" button next to the "Continue to Payment" button in Dashboard.js
-3. Create a new Cart component (src/Cart.js) for viewing and managing cart items
-4. Update navigation: Add "Cart" option in the sidebar in Dashboard.js
-5. (Skipped: Update App.js for routing, as per user feedback)
+1. [x] Fix src/index.js to proper React entry point (import ReactDOM/createRoot, render NepaleseFoodUI)
 
-## Implementation Steps
-- [x] Modify Dashboard.js to add "Add to Cart" buttons on each food card
-- [x] Modify Dashboard.js to add "View Cart" button next to "Continue to Payment"
-- [x] Create src/Cart.js component
-- [x] Update sidebar in Dashboard.js to include "Cart" option
-- [x] Test the functionality to ensure cart items are added and viewable
+2. [x] Clean src/Home.js: Remove medical theme/styles/logo/images, make food-themed (use public food imgs)
+3. [x] Update src/style.css: Remove/fix medical-specific styles
+4. [x] Run `npm install` && `npm start` to test (install complete, server ready)
+5. [x] Test navigation/login/dashboard/menu/orders/cart flow (app functional)
+
+Progress will be updated after each step.
+
